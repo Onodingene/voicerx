@@ -10,12 +10,13 @@ export const navItems = [
 // src/config/navigation.ts
 export const navConfig = {
   admin: [
-    { name: 'Hospital Registry', path: '/admin/hospitals' },
-    { name: 'Staff Documents', path: '/admin/docs' },
-    {name: 'All records', path: '/admin/records'},
-    { name: 'All records', path: '/admin/records/patients' },
-    { name: 'All records', path: '/admin/records/doctors' },
-    { name: 'System Config', path: '/admin/config' }
+    { name: 'Dashboard', path: '/admin/dashboard' },
+    { name: 'Hospital Profile', path: '/admin/hospital-profile' },
+    {name: 'Upload Staff', path: '/admin/staff/upload-staff'},
+    { name: 'Staff List', path: '/admin/staff/staff-list' },
+    { name: 'Roles & Permissions', path: '/admin/roles-permissions' },
+    { name: 'Audit Logs', path: '/admin/logs' },
+    { name: 'System Settings', path: '/admin/settings' }
   ],
   nurse: [
     { name: 'Patient Records', path: '/nurse/patients' },
