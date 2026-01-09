@@ -1,9 +1,13 @@
+import tailwindcssAnimate from "tailwindcss-animate";
 import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
-  prefix: "",
+  // Ensure this points exactly to where your VoiceRx files live
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -47,33 +51,17 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
-        status: {
-          pending: "hsl(var(--status-pending))",
-          "pending-bg": "hsl(var(--status-pending-bg))",
-          approved: "hsl(var(--status-approved))",
-          "approved-bg": "hsl(var(--status-approved-bg))",
-          updated: "hsl(var(--status-updated))",
-          "updated-bg": "hsl(var(--status-updated-bg))",
-        },
+        // Healthcare specific branding for VoiceRx
         healthcare: {
           purple: "hsl(var(--healthcare-purple))",
           "purple-light": "hsl(var(--healthcare-purple-light))",
           teal: "hsl(var(--healthcare-teal))",
           "teal-light": "hsl(var(--healthcare-teal-light))",
         },
-        gradient: {
-          start: "hsl(var(--gradient-start))",
-          end: "hsl(var(--gradient-end))",
+        status: {
+          pending: "hsl(var(--status-pending))",
+          approved: "hsl(var(--status-approved))",
+          updated: "hsl(var(--status-updated))",
         },
       },
       borderRadius: {
@@ -94,28 +82,13 @@ export default {
           from: { opacity: "0", transform: "translateY(4px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
-        "slide-in-right": {
-          from: { opacity: "0", transform: "translateX(10px)" },
-          to: { opacity: "1", transform: "translateX(0)" },
-        },
-        "pulse-subtle": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.7" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
-        "slide-in-right": "slide-in-right 0.3s ease-out",
-        "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
-      },
-      boxShadow: {
-        "card": "0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04)",
-        "card-hover": "0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)",
-        "elevated": "0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05)",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;
