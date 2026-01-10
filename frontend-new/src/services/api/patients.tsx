@@ -3,7 +3,7 @@ import axios from 'axios';
 // what a Patient looks like in your DB
 import type { Patient } from '../types/db';
 
-const API_URL = '/api';
+const API_URL = 'http://localhost:5001/api';
 
 export const patientApi = {
   getAll: async (token: string): Promise<Patient[]> => {
@@ -26,6 +26,14 @@ export const patientApi = {
     return response.data;
   },
 
-  //edit a patient info
-
+  // Edit a patient info**
+  update: async (id: string, payload: Partial<Patient>, token: string) => {
+    const response = await axios.patch(`${API_URL}/patients/${id}`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  },
 };
