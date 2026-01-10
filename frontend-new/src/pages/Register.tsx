@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../services/schema";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/authSlice";
-import { Sparkles, AlertCircle } from "lucide-react"; // Added AlertCircle icon
+import { Sparkles, AlertCircle, Eye, EyeOff } from "lucide-react"; // Added Eye icons
 
 // Demo credentials for quick testing
 const demoAccounts = [
@@ -17,6 +17,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [demoIndex, setDemoIndex] = useState(0);
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
 
   const {
     register,
@@ -35,7 +36,7 @@ const Register = () => {
     setValue("email", demo.email);
     setValue("password", demo.password);
     setDemoIndex((prev) => (prev + 1) % demoAccounts.length);
-    clearErrors("root"); // Clear any previous errors on new input
+    clearErrors("root"); 
   };
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -45,20 +46,17 @@ const Register = () => {
       
       const result = await authApi.manualLogin(data);
       
-      // If result is null or undefined, assume user not found (depending on your API structure)
       if (!result || !result.user) {
          throw new Error("User not found");
       }
 
-      // Update Redux
       dispatch(setCredentials({ user: result.user, token: result.token }));
       
-      // Role Mapping
       const rolePaths: Record<string, string> = {
         admin: "/admin/dashboard",
         nurse: "/nurse/dashboard",
         doctor: "/doctor/dashboard",
-        pharmacist: "/patient/pharmacist",
+        pharmacist: "/pharmacist/dashboard", // Fixed path from /patient/pharmacist
       };
 
       const userRole = result.user.role?.toLowerCase();
@@ -71,7 +69,6 @@ const Register = () => {
       
       let errorMessage = "Something went wrong. Please try again.";
       
-      // check for 404 specifically or specific backend messages
       if (error.response?.status === 404 || error.message === "User not found") {
         errorMessage = "User not found. Please check your email.";
       } else if (error.response?.status === 401) {
@@ -89,10 +86,10 @@ const Register = () => {
 
   return (
     <div className="flex min-h-screen font-subheading">
-      {/* Left Side - 3D Visual */}
+      {/* Left Side - Visual */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-900 via-purple-700 to-violet-600 relative items-center justify-center p-12">
         <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative z-10 text-tertiary max-w-lg">
+        <div className="relative z-10 text-white max-w-lg">
           <img
             src="https://raw.createusercontent.com/7ad8eebd-17f3-4e08-99f8-e5b08e5fe2a7/"
             alt="Health Management 3D Illustration"
@@ -110,9 +107,8 @@ const Register = () => {
       </div>
 
       {/* Right Side - Sign In Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-tertiary">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
-          {/* Logo/Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl mb-4 flex items-center justify-center">
@@ -158,14 +154,15 @@ const Register = () => {
               <input
                 id="email"
                 {...register("email")}
-                onChange={() => clearErrors("root")} // Clear error when user types
+                onChange={(e) => {
+                  register("email").onChange(e);
+                  clearErrors("root");
+                }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                 placeholder="you@example.com"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
 
@@ -176,23 +173,37 @@ const Register = () => {
               >
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                {...register("password")}
-                onChange={() => clearErrors("root")} // Clear error when user types
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                  onChange={(e) => {
+                    register("password").onChange(e);
+                    clearErrors("root");
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all pr-12"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center">
+              <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
@@ -207,7 +218,7 @@ const Register = () => {
               </a>
             </div>
 
-            {/* ERROR NOTIFICATION AREA */}
+            {/* Error Notification */}
             {errors.root && (
               <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
