@@ -21,8 +21,13 @@ export const navConfig = {
   admin: [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Hospital Profile', path: '/admin/hospital-profile', icon: Building2 },
+    {
+      name: 'Staff Management',
+      icon: Users,
+      children:[
     { name: 'Upload Staff', path: '/admin/staff/upload-staff', icon: UserPlus },
     { name: 'Staff List', path: '/admin/staff/staff-list', icon: Users },
+  ]},
     { name: 'Roles & Permissions', path: '/admin/roles-permissions', icon: ShieldCheck },
     { name: 'Audit Logs', path: '/admin/logs', icon: History },
     { name: 'System Settings', path: '/admin/settings', icon: Settings }

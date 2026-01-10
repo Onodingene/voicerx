@@ -5,6 +5,7 @@ import { type RootState } from '../store'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../store/authSlice';
 import { LogOut } from 'lucide-react';
+import  NavGroup  from './NavGroup';
 
 import { type LucideIcon } from 'lucide-react';
 
@@ -36,29 +37,36 @@ const Gendashboard = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-2 mt-4">
-          {links.map((link) => {
-            const isActive = location.pathname === link.path;
-            
-            return (
-              <Link 
-                key={link.path} 
-                to={link.path} 
-                className={`flex items-center gap-3 p-3 rounded-xl transition-all font-medium group ${
-                  isActive 
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-200" 
-                    : "text-gray-500 hover:bg-purple-50 hover:text-purple-600"
-                }`}
-              >
-                {/* Render the Icon dynamically */}
-                <link.icon className={`h-5 w-5 ${
-                  isActive ? "text-white" : "text-gray-400 group-hover:text-purple-600"
-                }`} />
-                
-                <span className="text-sm">{link.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+  {links.map((link) => {
+    // 1. Check if it's a dropdown group (has children)
+    if (link.children) {
+      return <NavGroup key={link.name} item={link} />;
+    }
+
+    // 2. It's a regular link (ensure path exists)
+    if (link.path) {
+      const isActive = location.pathname === link.path;
+      return (
+        <Link 
+          key={link.path} 
+          to={link.path} // TypeScript is happy now because path is guaranteed
+          className={`flex items-center gap-3 p-3 rounded-xl transition-all font-medium group ${
+            isActive 
+              ? "bg-purple-600 text-white shadow-md shadow-purple-200" 
+              : "text-gray-500 hover:bg-purple-50 hover:text-purple-600"
+          }`}
+        >
+          <link.icon className={`h-5 w-5 ${
+            isActive ? "text-white" : "text-gray-400 group-hover:text-purple-600"
+          }`} />
+          <span className="text-sm">{link.name}</span>
+        </Link>
+      );
+    }
+
+    return null; // Fallback for safety
+  })}
+</nav>
 
         {/* Optional: Logout Button at bottom */}
         <div className="p-4 border-t border-gray-100">

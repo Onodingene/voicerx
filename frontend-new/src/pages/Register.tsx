@@ -58,8 +58,7 @@ const Register = () => {
         admin: "/admin/dashboard",
         nurse: "/nurse/dashboard",
         doctor: "/doctor/dashboard",
-        patient: "/patient/dashboard",
-        receptionist: "/receptionist/dashboard"
+        pharmacist: "/patient/pharmacist",
       };
 
       const userRole = result.user.role?.toLowerCase();
