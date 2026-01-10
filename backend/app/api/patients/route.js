@@ -20,6 +20,22 @@ function generatePatientId() {
   return `P${timestamp}${random}`;
 }
 
+// Helper function to map blood type display values to Prisma enum values
+function mapBloodType(value) {
+  if (!value) return null;
+  const mapping = {
+    'A+': 'A_POSITIVE',
+    'A-': 'A_NEGATIVE',
+    'B+': 'B_POSITIVE',
+    'B-': 'B_NEGATIVE',
+    'AB+': 'AB_POSITIVE',
+    'AB-': 'AB_NEGATIVE',
+    'O+': 'O_POSITIVE',
+    'O-': 'O_NEGATIVE',
+  };
+  return mapping[value] || value;
+}
+
 // POST - Register new patient
 export async function POST(request) {
   try {
@@ -106,7 +122,7 @@ export async function POST(request) {
         lastName: body.lastName,
         dateOfBirth: new Date(body.dateOfBirth),
         gender: body.gender,
-        bloodType: body.bloodType || null,
+        bloodType: mapBloodType(body.bloodType),
         genotype: body.genotype || null,
         phoneNumber: body.phoneNumber,
         email: body.email || null,

@@ -374,7 +374,7 @@ export default function RecordNewPatient() {
 
             <div className="space-y-2">
               <Label>Gender *</Label>
-              <Select onValueChange={(v) => form.setValue("gender", v)}>
+              <Select value={form.watch("gender")} onValueChange={(v) => form.setValue("gender", v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Gender" />
                 </SelectTrigger>
@@ -426,7 +426,7 @@ export default function RecordNewPatient() {
 
             <div className="space-y-2">
               <Label>Relationship *</Label>
-              <Select onValueChange={(v) => form.setValue("emergencyContactRelationship", v)}>
+              <Select value={form.watch("emergencyContactRelationship")} onValueChange={(v) => form.setValue("emergencyContactRelationship", v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
@@ -453,7 +453,7 @@ export default function RecordNewPatient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-2">
               <Label>Blood Type</Label>
-              <Select onValueChange={(v) => form.setValue("bloodType", v)}>
+              <Select value={form.watch("bloodType")} onValueChange={(v) => form.setValue("bloodType", v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
@@ -471,7 +471,7 @@ export default function RecordNewPatient() {
             </div>
             <div className="space-y-2">
               <Label>Genotype</Label>
-              <Select onValueChange={(v) => form.setValue("genotype", v)}>
+              <Select value={form.watch("genotype")} onValueChange={(v) => form.setValue("genotype", v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
