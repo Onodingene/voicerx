@@ -183,6 +183,7 @@ return (
                 appointment={selectedAppointment}
                 open={modalOpen}
                 onOpenChange={setModalOpen}
+                onVitalsSaved={fetchQueue}
             />
 
 

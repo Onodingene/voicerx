@@ -98,7 +98,11 @@ const PatientTable = () => {
             <h3 className="text-lg font-semibold text-foreground">Patient Registry</h3>
             <p className="text-sm text-muted-foreground">Manage all registered hospital patients</p>
           </div>
-          <Button size="sm" className="bg-primary text-white hover:opacity-90">
+          <Button
+            size="sm"
+            className="bg-primary text-white hover:opacity-90"
+            onClick={() => navigate('/nurse/register-patient')}
+          >
             Register New Patient
           </Button>
         </div>
