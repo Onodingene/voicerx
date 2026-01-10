@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { type RootState } from "../store";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +11,9 @@ import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Textarea } from "./ui/textarea";
-import {
-  User, Heart, Thermometer, Activity, Scale,
-  Mic, Square, Loader2, Sparkles, Ruler
+import { 
+  User, Heart, Thermometer, Activity, Scale, 
+  Mic, Square, Loader2, Sparkles, Ruler 
 } from "lucide-react";
 import { type Appointment } from "../services/types/db";
 import { toast } from "../hooks/use-toast";
@@ -24,37 +22,25 @@ interface PatientIntakeModalProps {
   appointment: Appointment | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSaved?: () => void; // Callback when vitals are saved successfully
 }
 
-const initialFormData = {
-  bp_systolic: "",
-  bp_diastolic: "",
-  pulse_rate: "",
-  temperature: "",
-  respiratory_rate: "",
-  oxygen_saturation: "",
-  weight: "",
-  height: "",
-  pain_level: "0",
-  symptoms_description: ""
-};
-
-export function PatientIntakeModal({ appointment, open, onOpenChange, onSaved }: PatientIntakeModalProps) {
-  const { token } = useSelector((state: RootState) => state.auth);
+export function PatientIntakeModal({ appointment, open, onOpenChange }: PatientIntakeModalProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   // Form State matching your VitalsRecord Schema
-  const [formData, setFormData] = useState(initialFormData);
-
-  // Reset form when modal opens with a new appointment
-  useEffect(() => {
-    if (open && appointment) {
-      setFormData(initialFormData);
-    }
-  }, [open, appointment]);
+  const [formData, setFormData] = useState({
+    bp_systolic: "",
+    bp_diastolic: "",
+    pulse_rate: "",
+    temperature: "",
+    respiratory_rate: "",
+    oxygen_saturation: "",
+    weight: "",
+    height: "",
+    pain_level: "0",
+    symptoms_description: ""
+  });
 
   if (!appointment) return null;
 
@@ -87,62 +73,6 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onSaved }:
         description: "Vitals fields have been auto-filled from your recording.",
       });
     }, 2500);
-  };
-
-  const handleSaveVitals = async () => {
-    setIsSaving(true);
-    try {
-      // Build payload matching backend expectations
-      const payload = {
-        appointmentId: appointment.id,
-        bloodPressureSystolic: formData.bp_systolic ? parseInt(formData.bp_systolic) : null,
-        bloodPressureDiastolic: formData.bp_diastolic ? parseInt(formData.bp_diastolic) : null,
-        pulseRate: formData.pulse_rate ? parseInt(formData.pulse_rate) : null,
-        temperature: formData.temperature ? parseFloat(formData.temperature) : null,
-        respiratoryRate: formData.respiratory_rate ? parseInt(formData.respiratory_rate) : null,
-        oxygenSaturation: formData.oxygen_saturation ? parseInt(formData.oxygen_saturation) : null,
-        weight: formData.weight ? parseFloat(formData.weight) : null,
-        height: formData.height ? parseFloat(formData.height) : null,
-        painLevel: formData.pain_level ? parseInt(formData.pain_level) : null,
-        symptomsDescription: formData.symptoms_description || null,
-        recordedVia: "MANUAL",
-      };
-
-      const response = await fetch("/api/vitals", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to save vitals");
-      }
-
-      toast({
-        title: "Vitals Recorded",
-        description: `Vitals saved successfully. ${data.nextStep || ""}`,
-      });
-
-      // Close modal and refresh queue
-      onOpenChange(false);
-      if (onSaved) {
-        onSaved();
-      }
-    } catch (error) {
-      console.error("Save vitals error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save vitals",
-      });
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   return (
@@ -264,23 +194,8 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onSaved }:
         </div>
 
         <div className="p-4 border-t bg-white flex justify-end gap-3">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSaving}>
-            Discard
-          </Button>
-          <Button
-            className="px-8 bg-primary hover:bg-primary/90"
-            onClick={handleSaveVitals}
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Record"
-            )}
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>Discard</Button>
+          <Button className="px-8 bg-primary hover:bg-primary/90">Save Record</Button>
         </div>
       </DialogContent>
     </Dialog>
