@@ -284,37 +284,39 @@ export default function SignUp() {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label htmlFor="adminEmail" className={labelClass}>Admin Email (Login ID)</label>
-                  <input
-                    id="adminEmail" name="adminEmail" type="email"
-                    required
-                    className={inputClass}
-                    placeholder="john@hospital.com"
-                    value={formData.adminEmail} onChange={handleChange}
-                  />
-                </div>
+    {/* Email - Full Width */}
+    <div className="md:col-span-2">
+      <label htmlFor="adminEmail" className={labelClass}>Admin Email (Login ID)</label>
+      <input
+        id="adminEmail" name="adminEmail" type="email"
+        required
+        className={inputClass}
+        placeholder="janet.abdullahi@hospital.com"
+        value={formData.adminEmail} onChange={handleChange}
+      />
+    </div>
 
-                <div className="relative">
-                  <label htmlFor="adminPassword" className={labelClass}>Password</label>
-                  <div className="relative">
-                    <input
-                      id="adminPassword" name="adminPassword"
-                      type={showPassword ? "text" : "password"}
-                      required minLength={8}
-                      className={inputClass}
-                      placeholder="••••••••"
-                      value={formData.adminPassword} onChange={handleChange}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-purple-600"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </div>
+    {/* Password */}
+    <div className="md:col-span-1">
+      <label htmlFor="adminPassword" className={labelClass}>Password</label>
+      <div className="relative">
+        <input
+          id="adminPassword" name="adminPassword"
+          type={showPassword ? "text" : "password"}
+          required minLength={8}
+          className={`${inputClass} pr-12`} // Added padding for the icon
+          placeholder="••••••••"
+          value={formData.adminPassword} onChange={handleChange}
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+        </button>
+      </div>
+    </div>
 
                 <div>
                   <label htmlFor="confirmPassword" className={labelClass}>Confirm Password</label>
