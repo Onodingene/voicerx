@@ -5,10 +5,10 @@ import Register from './pages/Register'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NurseOverview from './pages/nurse/NurseOverview';
 import PatientsPage from './pages/nurse/PatientsPage';
-import { RoleGuard } from './components/RoleGuard';
+// import { RoleGuard } from './components/RoleGuard';
 import RecordNewPatient from './pages/nurse/RecordNewPatient';
 import SignUp from './pages/SignUp';
-import AdminDashboard from './pages/AdminDBD';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import PharmacyDashboard from './pages/pharmacy/PharmacyOverview';
 import PharmacyPending from './pages/pharmacy/PharmacyPending';
 import PharmacyDispensed from './pages/pharmacy/PharmacyDispensed';
