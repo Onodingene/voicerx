@@ -51,12 +51,14 @@ export async function POST(request) {
     }
 
     // Check if hospital email already exists
+    const orConditions = [{ email: email }];
+    if (registrationNumber) {
+      orConditions.push({ registrationNumber });
+    }
+
     const existingHospital = await prisma.hospital.findFirst({
       where: {
-        OR: [
-          { email: email },
-          registrationNumber ? { registrationNumber } : {},
-        ],
+        OR: orConditions,
       },
     });
 

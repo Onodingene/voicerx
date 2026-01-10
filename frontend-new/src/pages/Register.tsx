@@ -56,7 +56,7 @@ const Register = () => {
         admin: "/admin/dashboard",
         nurse: "/nurse/dashboard",
         doctor: "/doctor/dashboard",
-        pharmacist: "/pharmacist/dashboard", // Fixed path from /patient/pharmacist
+        pharmacist: "/pharmacy/dashboard",
       };
 
       const userRole = result.user.role?.toLowerCase();
