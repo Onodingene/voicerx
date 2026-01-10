@@ -18,7 +18,7 @@ import RolesPermissions from './pages/admin/RolesPermissions';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AuditLogs from './pages/admin/AuditLogs';
 import SystemSettings from './pages/admin/SystemSettings';
-
+import NotFound from './pages/NotFound';
 
 function App() {
 
@@ -55,6 +55,7 @@ function App() {
           <Route path="/pharmacy/dispensed" element={<PharmacyDispensed />} />
 
         </Route>
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
     </BrowserRouter>
