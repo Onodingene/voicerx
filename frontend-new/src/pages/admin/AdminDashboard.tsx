@@ -57,16 +57,16 @@ const AdminDashboard = () => {
       <div className="space-y-8">
         {/* Welcome Header */}
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
             Welcome back, {user?.firstName || 'Admin'}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Here's an overview of your healthcare system setup
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -189,10 +189,10 @@ const AdminDashboard = () => {
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-xl font-semibold text-foreground mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">
             Quick Actions
           </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3">
             <QuickActionCard
               title="Hospital Profile"
               description="Update hospital information"
@@ -247,17 +247,19 @@ function QuickActionCard({ title, description, icon: Icon, href }: QuickActionCa
   return (
     <a
       href={href}
-      className="block p-4 bg-card border border-border rounded-lg shadow-card hover:shadow-soft hover:border-primary/30 transition-all group"
+      className="block p-3 sm:p-4 bg-card border border-border rounded-lg shadow-card hover:shadow-soft hover:border-primary/30 transition-all group"
     >
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-          <Icon className="h-5 w-5 text-primary" />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+        <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
         </div>
-        <div>
-          <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
+        <div className="min-w-0">
+          <h3 className="text-sm sm:text-base font-medium text-foreground group-hover:text-primary transition-colors truncate">
             {title}
           </h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 sm:line-clamp-none">
+            {description}
+          </p>
         </div>
       </div>
     </a>
