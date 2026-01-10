@@ -258,29 +258,28 @@ export default function SignUp() {
             {/* Section: Admin Info */}
             <div className="space-y-4 pt-4">
               <h3 className="text-sm uppercase tracking-wide text-purple-600 font-bold border-b border-gray-100 pb-2">
-                Admin Administrator
+                Admin Information
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label htmlFor="adminFirstName" className={labelClass}>Admin First Name</label>
+                <div>
+                  <label htmlFor="adminFirstName" className={labelClass}>First Name</label>
                   <input
                     id="adminFirstName" name="adminFirstName"
                     required
                     className={inputClass}
-                    placeholder="Dr. John Doe"
+                    placeholder="John"
                     value={formData.adminFirstName} onChange={handleChange}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label htmlFor="adminLastName" className={labelClass}>Admin Last Name</label>
+                <div>
+                  <label htmlFor="adminLastName" className={labelClass}>Last Name</label>
                   <input
                     id="adminLastName" name="adminLastName"
                     required
                     className={inputClass}
-                    placeholder="Dr. John Doe"
+                    placeholder="Doe"
                     value={formData.adminLastName} onChange={handleChange}
                   />
                 </div>
@@ -328,7 +327,6 @@ export default function SignUp() {
                     value={formData.confirmPassword} onChange={handleChange}
                   />
                 </div>
-              </div>
               </div>
             </div>
 
