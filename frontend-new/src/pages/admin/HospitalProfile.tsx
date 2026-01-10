@@ -7,6 +7,7 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { useToast } from "../../hooks/use-toast";
+import { PageHeader } from "../../components/ui/PageHeader";
 
 const HospitalProfile = () => {
   const { toast } = useToast();
@@ -33,15 +34,13 @@ const HospitalProfile = () => {
   };
 
   return (
- 
       <div className="space-y-6 max-w-3xl">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Hospital Profile</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your hospital's information and admin details
-          </p>
-        </div>
+        <PageHeader
+          title="Hospital Profile"
+          description="Manage your hospital's information and admin details"
+          breadcrumbs={[{ label: "Hospital Profile" }]}
+          backHref="/admin/dashboard"
+        />
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Hospital Information */}
