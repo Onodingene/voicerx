@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../../store';
 import { StatusLegend } from "../../components/StatusLegend";
@@ -39,14 +39,16 @@ export default function NurseOverview() {
     const [newPatientOpen, setNewPatientOpen] = useState(false);
     const [doctorDialogOpen, setDoctorDialogOpen] = useState(false);
 
-    // 1. Fetch Appointments (The Queue)
-    const fetchQueue = async (isManualRefresh = false) => {
+    // 1. Fetch Appointments (The Queue) - wrapped in useCallback to prevent infinite loops
+    const fetchQueue = useCallback(async (isManualRefresh = false) => {
         if (!token) {
-            toast({ 
-                variant: "destructive", 
-                title: "Authentication Required", 
-                description: "Please log in to view the queue." 
-            });
+            if (isManualRefresh) {
+                toast({ 
+                    variant: "destructive", 
+                    title: "Authentication Required", 
+                    description: "Please log in to view the queue." 
+                });
+            }
             return;
         }
 
@@ -58,6 +60,8 @@ export default function NurseOverview() {
             }
 
             const data = await appointmentApi.getNurseQueue(token);
+            
+            console.log("Fetched appointments:", data); // Debug log
             
             // Sort: Emergency > Urgent > Normal (UPPERCASE to match backend)
             const priorityOrder: Record<string, number> = {
@@ -86,32 +90,38 @@ export default function NurseOverview() {
                                error.response?.data?.error || 
                                "Failed to load queue. Please try again.";
             
-            toast({ 
-                variant: "destructive", 
-                title: "Error Loading Queue", 
-                description: errorMessage 
-            });
+            if (isManualRefresh) {
+                toast({ 
+                    variant: "destructive", 
+                    title: "Error Loading Queue", 
+                    description: errorMessage 
+                });
+            }
         } finally {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    };
+    }, [token]); // Only depends on token
 
     // Load queue on mount and when token changes
     useEffect(() => { 
-        fetchQueue(); 
-    }, [token]);
+        fetchQueue(false); 
+    }, [fetchQueue]);
 
     // ✅ AUTO-REFRESH: Poll for new appointments every 30 seconds
     useEffect(() => {
         if (!token) return;
 
         const interval = setInterval(() => {
-            fetchQueue(); // Silently refresh in background
+            console.log("Auto-refreshing queue..."); // Debug log
+            fetchQueue(false); // Silently refresh in background
         }, 30000); // 30 seconds
 
-        return () => clearInterval(interval); // Cleanup on unmount
-    }, [token]);
+        return () => {
+            console.log("Clearing auto-refresh interval"); // Debug log
+            clearInterval(interval);
+        };
+    }, [token, fetchQueue]);
 
     // 2. Computed Stats based on DB Schema
     const stats = useMemo(() => {
@@ -186,6 +196,7 @@ export default function NurseOverview() {
     };
 
     const handleManualRefresh = () => {
+        console.log("Manual refresh triggered"); // Debug log
         fetchQueue(true);
     };
 
@@ -239,6 +250,7 @@ export default function NurseOverview() {
                                 aria-label="Refresh queue"
                                 onClick={handleManualRefresh}
                                 disabled={isRefreshing || isLoading}
+                                title="Refresh queue"
                             >
                                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                             </Button>
@@ -312,7 +324,10 @@ export default function NurseOverview() {
                 appointment={selectedAppointment}
                 open={modalOpen}
                 onOpenChange={setModalOpen}
-                onVitalsSaved={fetchQueue}
+                onVitalsSaved={() => {
+                    console.log("Vitals saved, refreshing queue");
+                    fetchQueue(false);
+                }}
             />
 
             {selectedAppointment && (
@@ -327,7 +342,10 @@ export default function NurseOverview() {
                     }
                     patientId={selectedAppointment.patientId}
                     doctors={[]} // For now, pass an empty array or your list of doctors
-                    onAssign={fetchQueue} // Refresh queue after assignment
+                    onAssign={(doctorId: string) => {
+                        console.log("Doctor assigned:", doctorId);
+                        fetchQueue(false); // Refresh queue after assignment
+                    }}
                 />
             )}
         </div>
