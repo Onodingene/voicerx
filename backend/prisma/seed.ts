@@ -1,4 +1,4 @@
-import { PrismaClient, BloodType, Genotype, Gender, UserRole, EmergencyContactRelationship, PatientStatus } from '../generated/prisma/client';
+import { PrismaClient, BloodType, Genotype, Gender, UserRole, PatientStatus } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcryptjs';
@@ -131,7 +131,7 @@ async function main() {
       genotype: Genotype.AA,
       emergencyContactName: 'Mary Smith',
       emergencyContactPhone: '+234 802 345 6789',
-      emergencyContactRelationship: EmergencyContactRelationship.SPOUSE,
+      emergencyContactRelationship: 'SPOUSE',
       hospitalId: hospital.id,
       registeredBy: nurse.id,
       status: PatientStatus.ACTIVE,
