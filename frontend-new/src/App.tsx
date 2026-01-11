@@ -32,6 +32,7 @@ import Profile from "./pages/doctor/Profile";
 import Records from "./pages/doctor/Records";
 import AvailableDoctors from './pages/nurse/AvailableDoctors';
 import Index from './pages/Index';
+import { RoleGuard } from './components/RoleGuard';
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ function App() {
         <Route element={<Gendashboard />}>
 
           {/* Admin Routes */}
+          <Route element={<RoleGuard allowedRoles={['admin']} />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/hospital-profile" element={<HospitalProfile />} />
           <Route path="/admin/staff/upload-staff" element={<UploadStaff />} />
@@ -62,21 +64,27 @@ function App() {
           <Route path="/admin/roles-permissions" element={<RolesPermissions/>} />
           <Route path="/admin/logs" element={<AuditLogs/>} />
           <Route path="/admin/settings" element={<SystemSettings/>} />
+          </Route>
 
 
           {/* Nurse Routes */}
+          <Route element={<RoleGuard allowedRoles={['nurse']} />}>
           <Route path="/nurse/dashboard" element={<NurseOverview />} />
           <Route path="/nurse/patients" element={<PatientsPage />} />
           <Route path="/nurse/register-patient" element={<RecordNewPatient />} />
           <Route path="/nurse/available-doctors" element={<AvailableDoctors />} />
+          </Route>
 
           {/* Pharmacist Routes */}
+          <Route element={<RoleGuard allowedRoles={['pharmacist']} />}>
           <Route path="/pharmacy/dashboard" element={<PharmacyDashboard />} />
           <Route path="/pharmacy/pending" element={<PharmacyPending />} />
           <Route path="/pharmacy/dispensed" element={<PharmacyDispensed />} />
+          </Route>
 
 
           {/* Doctor Routes */}
+          <Route element={<RoleGuard allowedRoles={['doctor']} />}>
           <Route path="/doctor/dashboard" element={<Dashboard />} />
           <Route path="/doctor/patients" element={<PatientList />} />
           <Route path="/doctor/patient/:patientId" element={<PatientRecord />} />
@@ -84,6 +92,7 @@ function App() {
           <Route path="/doctor/records" element={<Records />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/doctor/profile" element={<Profile />} />
+          </Route>
           
 
         </Route>
