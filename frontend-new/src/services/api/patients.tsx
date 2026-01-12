@@ -6,14 +6,13 @@ import type { Patient } from '../types/db';
 const API_URL = '/api';
 
 export const patientApi = {
-  getAll: async (token: string): Promise<Patient[]> => {
-    const response = await axios.get(`${API_URL}/patients`, {
+  getAll: async (token: string) => {
+    const response = await axios.get<Patient[]>(`${API_URL}/patients`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // backend needs to know who is asking
       },
     });
-    // Backend returns { patients: [...], pagination: {...} }
-    return response.data.patients || [];
+    return response.data;
   },
   // Create a new patient entry in the database
   create: async (payload: any, token: string) => {
@@ -26,14 +25,6 @@ export const patientApi = {
     return response.data;
   },
 
-  // Edit a patient info**
-  update: async (id: string, payload: Partial<Patient>, token: string) => {
-    const response = await axios.patch(`${API_URL}/patients/${id}`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-    });
-    return response.data;
-  },
+  //edit a patient info
+
 };
