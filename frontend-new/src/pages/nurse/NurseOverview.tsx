@@ -5,10 +5,7 @@ import { type RootState } from '../../store';
 import { StatusLegend } from "../../components/StatusLegend";
 import { appointmentApi } from '../../services/api/appointments';
 import { useNavigate } from 'react-router-dom';
-import {
-  type Appointment,
-  type ApptStatus
-} from '../../services/types/db';
+import { type Appointment } from '../../services/types/db';
 import axios from 'axios';
 
 // UI Components
@@ -29,6 +26,7 @@ interface AvailableDoctor {
   name: string;
   specialty: string;
   currentPatients: number;
+  availability: "available" | "busy";
 }
 
 export default function NurseOverview() {
@@ -62,7 +60,7 @@ export default function NurseOverview() {
                 NORMAL: 1
                 };
 
-                const sorted = data.sort((a, b) => {
+                const sorted = data.sort((a: Appointment, b: Appointment) => {
                 // Use the exact property name from your DB types
                 return priorityOrder[b.priority] - priorityOrder[a.priority];
                 });
@@ -81,7 +79,12 @@ export default function NurseOverview() {
             const response = await axios.get('/api/doctors/available', {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setAvailableDoctors(response.data.doctors || []);
+            // Map to include availability field for DoctorAssignmentDialog
+            const doctors = (response.data.doctors || []).map((doc: AvailableDoctor) => ({
+                ...doc,
+                availability: "available" as const,
+            }));
+            setAvailableDoctors(doctors);
         } catch (error) {
             console.error("Failed to fetch doctors:", error);
         }

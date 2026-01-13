@@ -1,12 +1,10 @@
 import axios from 'axios';
-
-// what a Patient looks like in your DB
 import type { Patient } from '../types/db';
 
 const API_URL = '/api';
 
 export const patientApi = {
-  getAll: async (token: string) => {
+  getAll: async (token: string): Promise<Patient[]> => {
     const response = await axios.get(`${API_URL}/patients`, {
       headers: {
         Authorization: `Bearer ${token}`,
