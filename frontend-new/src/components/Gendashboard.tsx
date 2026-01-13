@@ -54,7 +54,7 @@ const Gendashboard = () => {
         {/* Branding Section */}
         <div className="p-6">
           <h2 className="font-heading text-xl font-bold text-white truncate">
-            {user?.hospitalId?.name || "Dr Voicerx"}
+            {user?.hospitalId?.name || "HealthFlow"}
           </h2>
           <p className="text-[10px] text-purple-300 uppercase tracking-widest mt-1">
             Hospital Management
@@ -63,7 +63,7 @@ const Gendashboard = () => {
 
         <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
           {links.map((link) => {
-            if ('children' in link && link.children) {
+            if (link.children) {
               return <NavGroup key={link.name} item={link} onNavigate={closeSidebar} />;
             }
 

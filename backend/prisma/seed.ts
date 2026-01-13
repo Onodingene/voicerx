@@ -114,7 +114,7 @@ async function main() {
   });
   console.log('Created receptionist:', receptionist.email);
 
-  // Create a sample patient
+  // Create a sample patient using raw enum string values (required for pg adapter)
   const patient = await prisma.patient.upsert({
     where: { patientIdNumber: 'P000001' },
     update: {},
@@ -123,18 +123,18 @@ async function main() {
       firstName: 'John',
       lastName: 'Smith',
       dateOfBirth: new Date('1990-05-15'),
-      gender: Gender.MALE,
+      gender: 'MALE' as Gender,
       phoneNumber: '+234 801 234 5678',
       email: 'john.smith@email.com',
       address: '456 Patient Street, Lagos',
-      bloodType: BloodType.O_POSITIVE,
-      genotype: Genotype.AA,
+      bloodType: 'O_POSITIVE' as BloodType,
+      genotype: 'AA' as Genotype,
       emergencyContactName: 'Mary Smith',
       emergencyContactPhone: '+234 802 345 6789',
       emergencyContactRelationship: 'SPOUSE',
       hospitalId: hospital.id,
       registeredBy: nurse.id,
-      status: PatientStatus.ACTIVE,
+      status: 'ACTIVE' as PatientStatus,
     },
   });
   console.log('Created patient:', patient.firstName, patient.lastName);

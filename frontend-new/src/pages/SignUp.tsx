@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Building2, Loader2, ArrowRight, Sparkles } from "lucide-react";
-import { toast } from "../hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 import axios from "axios";
 
 // API URL - uses Vite proxy to forward to backend
@@ -43,6 +43,7 @@ const generateDemoData = () => {
 };
 
 export default function SignUp() {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -105,17 +106,18 @@ export default function SignUp() {
 
       // 3. API Call
       await axios.post(`${API_URL}/auth/register`, payload);
+      console.log("Registration API Success!");
       
 
       // 4. Success Handling
       toast({
         title: "Registration Successful!",
-        description: "Please check your email to verify your account.",
-        className: "bg-green-600 text-white"
+        description: "Please check your email to verify your account. Redirecting to sign in....",
+        className: "bg-green-600 text-white border-none"
       });
 
       // Redirect to Login (/) after a short delay
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate("/signin"), 3000);
 
     } catch (error: any) {
   console.error("DEBUGGING REGISTRATION:", error); // Check your browser console for this!
@@ -130,10 +132,8 @@ export default function SignUp() {
     title: "Registration Error",
     description: errorMessage
   });
-
-    } finally {
-      setIsLoading(false);
-    }
+  setIsLoading(false);
+}
   };
 
   // Reusable input style class to match Login page
@@ -350,7 +350,7 @@ export default function SignUp() {
           <p className="mt-8 text-center text-sm text-gray-600">
             Already have an account?{" "}
             <Link
-              to="/"
+              to="/signin"
               className="font-medium text-purple-600 hover:text-purple-700 hover:underline transition-colors"
             >
               Sign in here
