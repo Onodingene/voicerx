@@ -10,14 +10,17 @@ import { Sparkles, AlertCircle, Eye, EyeOff } from "lucide-react"; // Added Eye 
 
 // Demo credentials for quick testing
 const demoAccounts = [
-  { email: "admin@testhospital.com", password: "TestPassword123", label: "Test Hospital Admin" },
+  { email: "admin@testhospital.com", password: "TestPassword123", label: "Admin" },
+  { email: "robert.jones@testhospital.com", password: "Welcome@123", label: "Nurse" },
+  { email: "sarah.chen@testhospital.com", password: "Welcome@123", label: "Doctor" },
+  { email: "mike.wilson@testhospital.com", password: "Welcome@123", label: "Pharmacist" },
 ];
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [demoIndex, setDemoIndex] = useState(0);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showDemoDropdown, setShowDemoDropdown] = useState(false);
 
   const {
     register,
@@ -30,13 +33,17 @@ const Register = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  // Fill form with demo credentials
-  const fillDemoCredentials = () => {
-    const demo = demoAccounts[demoIndex];
+  // Fill form with selected demo credentials
+  const fillDemoCredentials = (index: number) => {
+    // Clear any existing login first
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
+    const demo = demoAccounts[index];
     setValue("email", demo.email);
     setValue("password", demo.password);
-    setDemoIndex((prev) => (prev + 1) % demoAccounts.length);
-    clearErrors("root"); 
+    clearErrors("root");
+    setShowDemoDropdown(false);
   };
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -126,14 +133,33 @@ const Register = () => {
                   />
                 </svg>
               </div>
-              <button
-                type="button"
-                onClick={fillDemoCredentials}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg"
-              >
-                <Sparkles className="w-4 h-4" />
-                Demo Login
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowDemoDropdown(!showDemoDropdown)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Demo Login
+                  <svg className={`w-4 h-4 transition-transform ${showDemoDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {showDemoDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    {demoAccounts.map((account, index) => (
+                      <button
+                        key={account.email}
+                        type="button"
+                        onClick={() => fillDemoCredentials(index)}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                      >
+                        {account.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-2">
               Welcome back

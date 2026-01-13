@@ -6,15 +6,17 @@ const API_URL = '/api';
 export const appointmentApi = {
   getNurseQueue: async (token: string) => {
     // 1. Fetch all appointments
-    const response = await axios.get<Appointment[]>(`${API_URL}/appointments`, {
+    const response = await axios.get(`${API_URL}/appointments`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    // Backend returns { appointments: [...], pagination: {...} }
+    const appointments = response.data.appointments || [];
 
     // 2. Filter logic (if backend sends everything)
     const hiddenStatuses = ['COMPLETED', 'CANCELLED'];
 
-    return response.data.filter(apt =>
+    return appointments.filter((apt: Appointment) =>
       !hiddenStatuses.includes(apt.status)
     );
   },

@@ -7,12 +7,13 @@ const API_URL = '/api';
 
 export const patientApi = {
   getAll: async (token: string) => {
-    const response = await axios.get<Patient[]>(`${API_URL}/patients`, {
+    const response = await axios.get(`${API_URL}/patients`, {
       headers: {
-        Authorization: `Bearer ${token}`, // backend needs to know who is asking
+        Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    // Backend returns { patients: [...], pagination: {...} }
+    return response.data.patients || [];
   },
   // Create a new patient entry in the database
   create: async (payload: any, token: string) => {

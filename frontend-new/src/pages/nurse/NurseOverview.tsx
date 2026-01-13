@@ -5,10 +5,11 @@ import { type RootState } from '../../store';
 import { StatusLegend } from "../../components/StatusLegend";
 import { appointmentApi } from '../../services/api/appointments';
 import { useNavigate } from 'react-router-dom';
-import { 
-  type Appointment, 
-  type ApptStatus 
+import {
+  type Appointment,
+  type ApptStatus
 } from '../../services/types/db';
+import axios from 'axios';
 
 // UI Components
 import { toast } from "../../hooks/use-toast";
@@ -23,8 +24,12 @@ import { PatientIntakeModal } from "../../components/PatientIntakeModal";
 //import  RecordNewPatient  from "./RecordNewPatient";
 import { DoctorAssignmentDialog } from "../../components/DoctorAssignmentDialog";
 
-// Assuming you fetch this from your backend
-const availableDoctorsCount = 5;
+interface AvailableDoctor {
+  id: string;
+  name: string;
+  specialty: string;
+  currentPatients: number;
+}
 
 export default function NurseOverview() {
 
@@ -34,6 +39,7 @@ export default function NurseOverview() {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [availableDoctors, setAvailableDoctors] = useState<AvailableDoctor[]>([]);
 
     // UI State
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -68,7 +74,23 @@ export default function NurseOverview() {
         }
     };
 
-    useEffect(() => { fetchQueue(); }, [token]);
+    // 1b. Fetch Available Doctors
+    const fetchDoctors = async () => {
+        if (!token) return;
+        try {
+            const response = await axios.get('/api/doctors/available', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setAvailableDoctors(response.data.doctors || []);
+        } catch (error) {
+            console.error("Failed to fetch doctors:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchQueue();
+        fetchDoctors();
+    }, [token]);
 
     // 2. Computed Stats based on DB Schema
     const stats = useMemo(() => ({
@@ -171,7 +193,9 @@ return (
 
                                         // Actions
                                         onClick={() => handleRecordVitals(apt)}
+                                        onStartIntake={() => handleRecordVitals(apt)}
                                         onRecordVitals={() => handleRecordVitals(apt)}
+                                        onUpdateVitals={() => handleRecordVitals(apt)}
                                         onAssignDoctor={() => handleOpenDoctorAssignment(apt)}
                                     />
                                 </div>
@@ -183,14 +207,14 @@ return (
 
             {/* Circular Floating Button */}
       <div className="fixed bottom-8 right-8 z-50">
-        <button 
+        <button
           onClick={() => setShowPopUp(!showPopUp)}
           className="relative p-4 bg-[#390C87] text-white rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-95"
         >
           <Users size={28} />
-          {availableDoctorsCount > 0 && (
-            <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white translate-x-1/4 -translate-y-1/4">
-              {availableDoctorsCount}
+          {availableDoctors.length > 0 && (
+            <span className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white translate-x-1/4 -translate-y-1/4">
+              {availableDoctors.length}
             </span>
           )}
         </button>
@@ -203,15 +227,18 @@ return (
               <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Live</span>
             </div>
             <div className="space-y-3">
-              {/* Short list of 3 doctors */}
-              {['Dr. Onerhime', 'Dr. Kosiso', 'Dr. Sarah'].map((doc) => (
-                <div key={doc} className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600 font-medium">{doc}</span>
-                </div>
-              ))}
+              {availableDoctors.length === 0 ? (
+                <p className="text-sm text-gray-500">No doctors available</p>
+              ) : (
+                availableDoctors.slice(0, 3).map((doc) => (
+                  <div key={doc.id} className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm text-gray-600 font-medium">{doc.name}</span>
+                  </div>
+                ))
+              )}
             </div>
-            <button 
+            <button
               onClick={() => navigate('/nurse/available-doctors')}
               className="w-full mt-4 py-2 text-xs font-bold text-[#390C87] bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
             >
@@ -226,6 +253,7 @@ return (
                 appointment={selectedAppointment}
                 open={modalOpen}
                 onOpenChange={setModalOpen}
+                onVitalsSaved={fetchQueue}
             />
 
 
@@ -236,8 +264,8 @@ return (
                     appointmentId={selectedAppointment.id}
                     patientName={`${selectedAppointment.patient?.firstName} ${selectedAppointment.patient?.lastName}`}
                     patientId={selectedAppointment.patientId}
-                    doctors={[]} // For now, pass an empty array or your list of doctors
-                    onAssign={fetchQueue} // Pass your refresh function to reload the queue after assignment
+                    doctors={availableDoctors}
+                    onAssign={() => { fetchQueue(); fetchDoctors(); }}
                 />
             )}
         </div>
