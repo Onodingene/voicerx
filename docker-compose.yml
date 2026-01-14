@@ -29,7 +29,7 @@ services:
       - ./backend/.env
     environment:
       DATABASE_URL: postgresql://voicerx:voicerx123@postgres:5432/voicerx
-      JWT_SECRET: your-secret-key-change-in-production
+      JWT_SECRET: b9f24c5511579743e19cea36c3ad3b9d3a389351ec7a7e1ed66e1b92baa9c590
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,8 +48,8 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_API_URL: http://localhost:5001/api
-      VITE_BACKEND_URL: http://backend:5001
+      VITE_API_URL: https://voicerxbackend.vercel.app/api
+      VITE_BACKEND_URL: https://voicerxbackend.vercel.app/
     depends_on:
       - backend
     volumes:

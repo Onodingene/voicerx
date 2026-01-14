@@ -93,8 +93,8 @@ jobs:
         working-directory: ./backend
         run: npm test --if-present
         env:
-          DATABASE_URL: postgresql://voicerx:voicerx123@localhost:5432/voicerx_test
-          JWT_SECRET: test-secret-key
+          DATABASE_URL: postgresql://postgres.jbyaqcywuoihhpwlnbxd:fumekslpc123@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?pgbouncer=true
+          JWT_SECRET: b9f24c5511579743e19cea36c3ad3b9d3a389351ec7a7e1ed66e1b92baa9c590
 
       - name: Install frontend dependencies
         working-directory: ./frontend-new

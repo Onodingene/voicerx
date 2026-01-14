@@ -9,7 +9,7 @@ export default defineConfig({
     host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: process.env.VITE_BACKEND_URL || 'http://localhost:5001',
+        target: process.env.VITE_BACKEND_URL || 'https://voicerxbackend.vercel.app/',
         changeOrigin: true,
       },
     },
