@@ -6,21 +6,38 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../services/schema";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/authSlice";
-import { Sparkles, AlertCircle, Eye, EyeOff } from "lucide-react"; // Added Eye icons
+import { Sparkles, AlertCircle, Eye, EyeOff, Users, Stethoscope, Pill, Shield } from "lucide-react";
 
-// Demo credentials for quick testing
+// Demo credentials for quick testing - includes uploaded staff
+// Note: Staff uploaded via CSV get password "Welcome@123" by default
 const demoAccounts = [
-  { email: "admin@testhospital.com", password: "TestPassword123", label: "Admin" },
-  { email: "robert.jones@testhospital.com", password: "Welcome@123", label: "Nurse" },
-  { email: "sarah.chen@testhospital.com", password: "Welcome@123", label: "Doctor" },
-  { email: "mike.wilson@testhospital.com", password: "Welcome@123", label: "Pharmacist" },
+  // Admin
+  { email: "admin@testhospital.com", password: "TestPassword123", label: "Admin", role: "admin" },
+  // Doctors (from uploaded staff - default password: Welcome@123)
+  { email: "john.smith@testhospital.com", password: "Welcome@123", label: "Dr. John Smith", role: "doctor" },
+  { email: "mary.johnson@testhospital.com", password: "Welcome@123", label: "Dr. Mary Johnson", role: "doctor" },
+  // Nurses (from uploaded staff)
+  { email: "robert.jones@testhospital.com", password: "Welcome@123", label: "Robert Jones", role: "nurse" },
+  { email: "linda.davis@testhospital.com", password: "Welcome@123", label: "Linda Davis", role: "nurse" },
+  // Pharmacists (from uploaded staff)
+  { email: "david.moore@testhospital.com", password: "Welcome@123", label: "David Moore", role: "pharmacist" },
+  { email: "jennifer.taylor@testhospital.com", password: "Welcome@123", label: "Jennifer Taylor", role: "pharmacist" },
 ];
+
+// Group accounts by role for display
+const demoByRole = {
+  admin: demoAccounts.filter(a => a.role === "admin"),
+  doctor: demoAccounts.filter(a => a.role === "doctor"),
+  nurse: demoAccounts.filter(a => a.role === "nurse"),
+  pharmacist: demoAccounts.filter(a => a.role === "pharmacist"),
+};
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [demoIndex, setDemoIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  const [showDemoDropdown, setShowDemoDropdown] = useState(false);
+  const [showDemoPanel, setShowDemoPanel] = useState(false);
 
   const {
     register,
@@ -33,17 +50,16 @@ const Register = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  // Fill form with selected demo credentials
-  const fillDemoCredentials = (index: number) => {
-    // Clear any existing login first
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-
-    const demo = demoAccounts[index];
+  // Fill form with specific demo credentials
+  const fillDemoCredentials = (account?: typeof demoAccounts[0]) => {
+    const demo = account || demoAccounts[demoIndex];
     setValue("email", demo.email);
     setValue("password", demo.password);
+    if (!account) {
+      setDemoIndex((prev) => (prev + 1) % demoAccounts.length);
+    }
     clearErrors("root");
-    setShowDemoDropdown(false);
+    setShowDemoPanel(false);
   };
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -133,33 +149,14 @@ const Register = () => {
                   />
                 </svg>
               </div>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowDemoDropdown(!showDemoDropdown)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Demo Login
-                  <svg className={`w-4 h-4 transition-transform ${showDemoDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {showDemoDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                    {demoAccounts.map((account, index) => (
-                      <button
-                        key={account.email}
-                        type="button"
-                        onClick={() => fillDemoCredentials(index)}
-                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
-                      >
-                        {account.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowDemoPanel(!showDemoPanel)}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg"
+              >
+                <Sparkles className="w-4 h-4" />
+                Demo Logins
+              </button>
             </div>
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-2">
               Welcome back
@@ -168,6 +165,102 @@ const Register = () => {
               Sign in to access your health dashboard
             </p>
           </div>
+
+          {/* Demo Credentials Panel */}
+          {showDemoPanel && (
+            <div className="mb-6 p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-amber-800">Demo Accounts</h3>
+                <span className="text-xs text-amber-600">Click to use</span>
+              </div>
+
+              <div className="space-y-3">
+                {/* Admin */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Shield className="w-3.5 h-3.5 text-purple-600" />
+                    <span className="text-xs font-semibold text-purple-700 uppercase">Admin</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {demoByRole.admin.map((acc) => (
+                      <button
+                        key={acc.email}
+                        type="button"
+                        onClick={() => fillDemoCredentials(acc)}
+                        className="px-2.5 py-1 text-xs bg-purple-100 text-purple-700 rounded-md hover:bg-purple-200 transition-colors"
+                      >
+                        {acc.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Doctors */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Stethoscope className="w-3.5 h-3.5 text-blue-600" />
+                    <span className="text-xs font-semibold text-blue-700 uppercase">Doctors</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {demoByRole.doctor.map((acc) => (
+                      <button
+                        key={acc.email}
+                        type="button"
+                        onClick={() => fillDemoCredentials(acc)}
+                        className="px-2.5 py-1 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+                      >
+                        {acc.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Nurses */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Users className="w-3.5 h-3.5 text-green-600" />
+                    <span className="text-xs font-semibold text-green-700 uppercase">Nurses</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {demoByRole.nurse.map((acc) => (
+                      <button
+                        key={acc.email}
+                        type="button"
+                        onClick={() => fillDemoCredentials(acc)}
+                        className="px-2.5 py-1 text-xs bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
+                      >
+                        {acc.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pharmacists */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Pill className="w-3.5 h-3.5 text-teal-600" />
+                    <span className="text-xs font-semibold text-teal-700 uppercase">Pharmacists</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {demoByRole.pharmacist.map((acc) => (
+                      <button
+                        key={acc.email}
+                        type="button"
+                        onClick={() => fillDemoCredentials(acc)}
+                        className="px-2.5 py-1 text-xs bg-teal-100 text-teal-700 rounded-md hover:bg-teal-200 transition-colors"
+                      >
+                        {acc.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-amber-600/80 text-center">
+                Staff password: <code className="px-1.5 py-0.5 bg-amber-100 rounded">Welcome@123</code> | Admin: <code className="px-1.5 py-0.5 bg-amber-100 rounded">TestPassword123</code>
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-6">
             <div>
